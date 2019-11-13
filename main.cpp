@@ -4,8 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <set>
-using namespace std;
 
+using namespace std;
 
 template <class T>
 class HItem {
@@ -24,9 +24,6 @@ public:
         return this->key;
     }
     void setKey(string key) {
-        this->key = key;
-    }
-    void setKey(int key) {
         this->key = key;
     }
     T getElement() {
@@ -109,29 +106,10 @@ class HashTable {
     int length;
 
     int hash(string key) {
-
-        int retorno;
-        if(key == "classicCars") {
-            retorno = 0;
-        } else if(key == "motorcycles") {
-            retorno = 1;
-        } else if(key == "planes") {
-            retorno = 2;
-        } else if(key == "ships") {
-            retorno = 3;
-        } else if(key == "trains") {
-            retorno = 4;
-        } else if(key == "trucksAndBuses") {
-            retorno = 5;
-        } else if(key == "vintageCars") {
-            retorno = 6;
-        } else {
-            int value = 0;
-            for(unsigned int i = 0; i < key.length(); i++)
-                value += key[i];
-            retorno = value % length;
-        }
-        return retorno;
+        int value = 0;
+        for(unsigned int i = 0; i < key.length(); i++)
+            value += key[i];
+        return value % length;
     }
 
 public:
@@ -224,7 +202,6 @@ public:
         getline(issLinha,contactLastName, ';');
         getline(issLinha,contactFirstName, ';');
         getline(issLinha,dealSize, '\n');
-
     }
 
     int getOrderNumber() {
@@ -266,17 +243,16 @@ public:
     string getDealSize() {
         return this->dealSize;
     }
-
-
 };
 class Sistema {
 private:
     vector <Registro*> dados;
-    HashTable <Registro*> *hashProductLine;
+    HashTable<Registro*> *hashCidade;
+
 public:
 
     Sistema(string arqDados) {
-        hashProductLine = new HashTable<Registro*>(7);
+        hashCidade = new HashTable<Registro*>(13);
         fstream arq;
         arq.open(arqDados.c_str(), fstream::in);
         string linha, topLine;
@@ -288,7 +264,7 @@ public:
                 getline(arq,linha,'\n');
                 Registro *reg = new Registro(linha);
                 dados.push_back(reg);
-                this->hashProductLine->insert(reg->getProductLine(), reg);
+                hashCidade->insert(reg->getCity(), reg);
             }
         } else {
             cout << "Erro ao abrir o arquivo!" << endl;
@@ -299,22 +275,44 @@ public:
 
     ~Sistema() {};
 
-    void imprimiRegistroTeste() {
-        vector<string>aleatorio;
-        for(vector<Registro*>::iterator it = this->dados.begin(); it != this->dados.end(); ++it) {
-            aleatorio.push_back((*it)->getCity());
-            cout << (*it)->getCity() << '\t';
+    HashTable <Registro*> *getHashCidade(){
+        return this->hashCidade;
+    }
 
+    void imprimiRegistroTeste() {
+        for(vector<Registro*>::iterator it = this->dados.begin(); it != this->dados.end(); ++it) {
+            cout << (*it)->getOrderNumber() << '\t';
+            cout << (*it)->getQuantityOrdered() << '\t';
+            cout << (*it)->getPriceEach() << '\t';
+            cout << (*it)->getOrderDate() << '\t';
+            cout << (*it)->getStatus() << '\t';
+            cout << (*it)->getProductLine() << '\t';
+            cout << (*it)->getProductCode() << '\t';
+            cout << (*it)->getCustomerName() << '\t';
+            cout << (*it)->getCity() << '\t';
+            cout << (*it)->getCountry() << '\t';
+            cout << (*it)->getContactLastName() << '\t';
+            cout << (*it)->getContactFirstName() << '\t';
+            cout << (*it)->getDealSize() << '\n';
         }
+    }
+
+    void findOrderNumber(int order) {
+
     }
 
 };
 
 int main() {
-    int opc;
+    int opc, order;
     string arquivo = "toy_sales.csv", nomeArq;
     Sistema *sistema = new Sistema(arquivo);
-    //sistema->imprimiRegistroTeste();
+
+    sistema->getHashCidade()->printHistogram();
+    cout << endl;
+
+    system("pause");
+
 
     while(1) {
         system("cls");
@@ -322,8 +320,13 @@ int main() {
         cout << "2 - Localizar por Product Code e Country" << endl;
         cout << "3 - Exportar por city" << endl;
         cout << "4 - Histogramas" << endl;
-        //cout << sistema->hashProductLine("motorcycle");
         cin >> opc;
+        switch(opc) {
+        case 1:
+            cout << "Digite o numero de ordem que deseja pesquisar: ";
+            cin >> order;
+            sistema->findOrderNumber(order);
+        }
 
     }
 
