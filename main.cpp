@@ -297,14 +297,19 @@ public:
         system("pause");
     };
 
+
     ~Sistema() {};
+
+    HashTable<Registro*> *getRegistroProductLineCountry(string key) {
+        // fazer essa caralha
+        return this->hashProductLine;
+    }
 
     void imprimiRegistroTeste() {
         vector<string>aleatorio;
         for(vector<Registro*>::iterator it = this->dados.begin(); it != this->dados.end(); ++it) {
             aleatorio.push_back((*it)->getCity());
             cout << (*it)->getCity() << '\t';
-
         }
     }
 
@@ -312,6 +317,7 @@ public:
 
 int main() {
     int opc;
+    string fodase = "motorcycle";
     string arquivo = "toy_sales.csv", nomeArq;
     Sistema *sistema = new Sistema(arquivo);
     //sistema->imprimiRegistroTeste();
@@ -319,11 +325,17 @@ int main() {
     while(1) {
         system("cls");
         cout << "1 - Localizar por Order Number" << endl;
-        cout << "2 - Localizar por Product Code e Country" << endl;
+        cout << "2 - Localizar por Product Line e Country" << endl;
         cout << "3 - Exportar por city" << endl;
         cout << "4 - Histogramas" << endl;
         //cout << sistema->hashProductLine("motorcycle");
         cin >> opc;
+
+
+
+        if(opc == 2){
+
+        }
 
     }
 
