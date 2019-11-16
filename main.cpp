@@ -170,45 +170,16 @@ public:
 
     void printList() {
         HItem<T>* current = head;
-        cout<< "registro: "<<endl;
-        cout << current->getElement()<<endl;
-        cout << current->getNext()<<endl;
-        cout << "end"<<endl;
+        int flag = 0;
         while(current != NULL) {
+            flag++;
             cout << current->getElement();
             current = current->getNext();
             if(current)
                 cout << ", ";
         }
+        cout << "\nTotal: " << flag << endl;
     }
-
-
-//    unsigned int find(string elemento) {
-//        HItem *current = this->front();
-//        unsigned int indice = 0;
-//        while(current != NULL) {
-//            if(current->getElement() != elemento) {
-//                current = current->getNext();
-//                indice++;
-//            } else {
-//                return indice;
-//            }
-//        }
-//    }
-//    HItem* at(int position) {
-//        HItem *current = this->front();
-//        unsigned int indice = 0;
-//        while(current != NULL) {
-//            if(indice != position) {
-//                indice++;
-//                current = current->getNext();
-//            } else {
-//                return current;
-//            }
-//        }
-//        return NULL;
-//    }
-
 };
 
 template <class T>
@@ -219,19 +190,19 @@ class HashTable {
     int hash(string key) {
 
         int retorno;
-        if(key == "classicCars") {
+        if(key == "Classic Cars") {
             retorno = 0;
-        } else if(key == "motorcycles") {
+        } else if(key == "Motorcycles") {
             retorno = 1;
-        } else if(key == "planes") {
+        } else if(key == "Planes") {
             retorno = 2;
-        } else if(key == "ships") {
+        } else if(key == "Ships") {
             retorno = 3;
-        } else if(key == "trains") {
+        } else if(key == "Trains") {
             retorno = 4;
-        } else if(key == "trucksAndBuses") {
+        } else if(key == "Trucks and Buses") {
             retorno = 5;
-        } else if(key == "vintageCars") {
+        } else if(key == "Vintage Cars") {
             retorno = 6;
         } else {
             int value = 0;
@@ -286,10 +257,11 @@ public:
         for(int i = 0; i < this->length; i++) {
             flag = 0;
             cout << i + 1 << ":\t";
-            for(int j = 0; j < this->table[i].size(); j++)
+            for(int j = 0; j < this->table[i].size(); j++){
                 flag++;
         }
         cout << flag << endl;
+        }
     }
 
     int getNumberOfItems() {
@@ -300,6 +272,9 @@ public:
     }
     int getLength() {
         return this->length;
+    }
+    int getHashIndice(string key){
+        return this->hash(key);
     }
 
     ~HashTable() {
@@ -319,7 +294,6 @@ public:
         fstream arq;
         arq.open(arqDados.c_str(), fstream::in);
         string linha, topLine;
-        cout << dados.size() << endl;
         if(arq.is_open()) {
             getline(arq,topLine);
             if(topLine != "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n");
@@ -332,8 +306,6 @@ public:
         } else {
             cout << "Erro ao abrir o arquivo!" << endl;
         }
-        cout << dados.size() << endl;
-        system("pause");
     };
 
 
@@ -345,33 +317,11 @@ public:
 
     void getRegistroProductLineCountry(string productLine, string country) {
         int flag = 0;
-
-        getHashProductLine()->getTable()->printList();
+        cout << "Product line: " << productLine << endl;
+        int indice = getHashProductLine()->getHashIndice(productLine);
+        cout << "indice: " <<indice << endl;
+        getHashProductLine()->getTable()[indice].printList();
         cout<<endl;
-        for(int i = 0; i < getHashProductLine()->getNumberOfItems(); i++) {
-            flag++;
-        }
-        cout << flag << endl;
-        //return this->hashProductLine;
-    }
-
-    string toCamelCase(string palavra) {
-        char c, anterior;
-        int i = 0;
-        string camelCase = "";
-        while (palavra[i]) {
-            c = palavra[i];
-            if (c != ' ') {
-                if (anterior == ' ') {
-                    camelCase += toupper(c);
-                } else {
-                    camelCase += tolower(c);
-                }
-            }
-            anterior = palavra[i];
-            i++;
-        }
-        return camelCase;
     }
 
 };
@@ -381,7 +331,6 @@ int main() {
     string productLine = "Motorcycles", country = "brazil";
     string arquivo = "toy_sales.csv", nomeArq;
     Sistema *sistema = new Sistema(arquivo);
-    //sistema->imprimiRegistroTeste();
 
     while(1) {
         system("cls");
@@ -389,7 +338,6 @@ int main() {
         cout << "2 - Localizar por Product Line e Country" << endl;
         cout << "3 - Exportar por city" << endl;
         cout << "4 - Histogramas" << endl;
-        //cout << sistema->hashProductLine("motorcycle");
         cin >> opc;
         switch(opc) {
         case 1:
@@ -402,6 +350,7 @@ int main() {
             break;
         case 4:
             sistema->getHashProductLine()->printHistogram();
+            system("pause");
             break;
         }
 
