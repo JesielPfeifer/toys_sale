@@ -210,7 +210,9 @@ public:
         if(item)
             return item->getElement();
     }
-
+    HLinkedList<T> *getTable(){
+        return this->table;
+    }
     void printTable() {
         cout << endl << "HashTable:";
         for(int i = 0; i < this->length; i++) {
@@ -300,9 +302,6 @@ public:
             cout << (*it)->getContactFirstName() << '\t';
             cout << (*it)->getDealSize() << '\n';
         }
-    }
-    void imprimiteste() {
-        for(int i = 0; i < getHashCidade()-)
     }
 
     void exportNewCity(string cityName) {
