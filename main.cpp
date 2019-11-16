@@ -180,6 +180,21 @@ public:
         }
         cout << "\nTotal: " << flag << endl;
     }
+
+    void printListCountry(string country) {
+        // TODO: Remover do HLinkedList e falar com o sor sobre a duplicata
+        HItem<T>* current = head;
+        while(current != NULL) {
+            if(current->getElement()->getCountry() == country) {
+                cout << current->getElement()->getOrderNumber() << "\t";
+                cout << current->getElement()->getOrderDate() << "\t";
+                cout << current->getElement()->getStatus() << "\t";
+                cout << current->getElement()->getCity() << "\t";
+                cout << current->getElement()->getCustomerName() << endl;
+            }
+            current = current->getNext();
+        }
+    }
 };
 
 template <class T>
@@ -320,7 +335,7 @@ public:
         cout << "Product line: " << productLine << endl;
         int indice = getHashProductLine()->getHashIndice(productLine);
         cout << "indice: " <<indice << endl;
-        getHashProductLine()->getTable()[indice].printList();
+        getHashProductLine()->getTable()[indice].printListCountry(country);
         cout<<endl;
     }
 
@@ -328,7 +343,7 @@ public:
 
 int main() {
     int opc;
-    string productLine = "Motorcycles", country = "brazil";
+    string productLine = "Motorcycles", country = "Germany";
     string arquivo = "toy_sales.csv", nomeArq;
     Sistema *sistema = new Sistema(arquivo);
 
