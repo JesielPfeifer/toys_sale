@@ -313,6 +313,26 @@ public:
         }
     }
 
+    string toCamelCase(string palavra) {
+        char c, anterior;
+        int i = 0;
+        string camelCase = "";
+        while (palavra[i]) {
+            c = palavra[i];
+            if (c != ' ') {
+                if (anterior == ' ') {
+                    camelCase += toupper(c);
+                } else {
+                    camelCase += tolower(c);
+                }
+            }
+            anterior = palavra[i];
+            i++;
+        }
+        return camelCase;
+    }
+
+
 };
 
 int main() {
