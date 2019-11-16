@@ -6,6 +6,83 @@
 #include <set>
 using namespace std;
 
+class Registro {
+private:
+    int orderNumber, quantityOrdered;
+    float priceEach;
+    string orderDate, status, productLine, productCode, customerName;
+    string city, country, contactLastName, contactFirstName, dealSize;
+    string linhaArq;
+public:
+    Registro() {};
+
+    Registro(string linhaArq) {
+        this->linhaArq = linhaArq;
+        string issOrderNumber, issQuantityOrdered, issPriceEach;
+        istringstream issLinha(linhaArq);
+
+        getline(issLinha,issOrderNumber, ';');
+        this->orderNumber = atoi(issOrderNumber.c_str());
+
+        getline(issLinha,issQuantityOrdered, ';');
+        this->quantityOrdered = atoi(issQuantityOrdered.c_str());
+
+        getline(issLinha,issPriceEach, ';');
+        this->priceEach = atof(issPriceEach.c_str());
+
+        getline(issLinha,orderDate, ';');
+        getline(issLinha,status, ';');
+        getline(issLinha,productLine, ';');
+        getline(issLinha,productCode, ';');
+        getline(issLinha,customerName, ';');
+        getline(issLinha,city, ';');
+        getline(issLinha,country, ';');
+        getline(issLinha,contactLastName, ';');
+        getline(issLinha,contactFirstName, ';');
+        getline(issLinha,dealSize, '\n');
+
+    }
+
+    int getOrderNumber() {
+        return this->orderNumber;
+    }
+    int getQuantityOrdered() {
+        return this->quantityOrdered;
+    }
+    float getPriceEach() {
+        return this->priceEach;
+    }
+    string getOrderDate() {
+        return this->orderDate;
+    }
+    string getStatus() {
+        return this->status;
+    }
+    string getProductLine() {
+        return this->productLine;
+    }
+    string getProductCode() {
+        return this->productCode;
+    }
+    string getCustomerName() {
+        return this->customerName;
+    }
+    string getCity() {
+        return this->city;
+    }
+    string getCountry() {
+        return this->country;
+    }
+    string getContactLastName() {
+        return this->contactLastName;
+    }
+    string getContactFirstName() {
+        return this->contactFirstName;
+    }
+    string getDealSize() {
+        return this->dealSize;
+    }
+};
 
 template <class T>
 class HItem {
@@ -93,6 +170,10 @@ public:
 
     void printList() {
         HItem<T>* current = head;
+        cout<< "registro: "<<endl;
+        cout << current->getElement()<<endl;
+        cout << current->getNext()<<endl;
+        cout << "end"<<endl;
         while(current != NULL) {
             cout << current->getElement();
             current = current->getNext();
@@ -100,6 +181,33 @@ public:
                 cout << ", ";
         }
     }
+
+
+//    unsigned int find(string elemento) {
+//        HItem *current = this->front();
+//        unsigned int indice = 0;
+//        while(current != NULL) {
+//            if(current->getElement() != elemento) {
+//                current = current->getNext();
+//                indice++;
+//            } else {
+//                return indice;
+//            }
+//        }
+//    }
+//    HItem* at(int position) {
+//        HItem *current = this->front();
+//        unsigned int indice = 0;
+//        while(current != NULL) {
+//            if(indice != position) {
+//                indice++;
+//                current = current->getNext();
+//            } else {
+//                return current;
+//            }
+//        }
+//        return NULL;
+//    }
 
 };
 
@@ -154,9 +262,9 @@ public:
         int index = hash(key);
         HItem<T>* item = table[index].getItem(key);
         if(item)
-            return key + ":\t" + item->getElement();
-        else
-            return key + ":\tnot found";
+            return item->getElement();
+//        else
+//            return key + ":\tnot found";
     }
 
     void printTable() {
@@ -167,15 +275,21 @@ public:
         }
     }
 
+    HLinkedList<T> *getTable() {
+        return this->table;
+    }
+
     void printHistogram() {
+        int flag;
         cout << "\n\nHash Table Contains ";
         cout << this->getNumberOfItems() << " Items\n";
         for(int i = 0; i < this->length; i++) {
+            flag = 0;
             cout << i + 1 << ":\t";
             for(int j = 0; j < this->table[i].size(); j++)
-                cout << " X";
-            cout << "\n";
+                flag++;
         }
+        cout << flag << endl;
     }
 
     int getNumberOfItems() {
@@ -184,91 +298,16 @@ public:
             itemCount += this->table[i].size();
         return itemCount;
     }
+    int getLength() {
+        return this->length;
+    }
 
     ~HashTable() {
         delete [] this->table;
     }
 };
 
-class Registro {
-private:
-    int orderNumber, quantityOrdered;
-    float priceEach;
-    string orderDate, status, productLine, productCode, customerName;
-    string city, country, contactLastName, contactFirstName, dealSize;
-    string linhaArq;
-public:
-    Registro() {};
 
-    Registro(string linhaArq) {
-        this->linhaArq = linhaArq;
-        string issOrderNumber, issQuantityOrdered, issPriceEach;
-        istringstream issLinha(linhaArq);
-
-        getline(issLinha,issOrderNumber, ';');
-        this->orderNumber = atoi(issOrderNumber.c_str());
-
-        getline(issLinha,issQuantityOrdered, ';');
-        this->quantityOrdered = atoi(issQuantityOrdered.c_str());
-
-        getline(issLinha,issPriceEach, ';');
-        this->priceEach = atof(issPriceEach.c_str());
-
-        getline(issLinha,orderDate, ';');
-        getline(issLinha,status, ';');
-        getline(issLinha,productLine, ';');
-        getline(issLinha,productCode, ';');
-        getline(issLinha,customerName, ';');
-        getline(issLinha,city, ';');
-        getline(issLinha,country, ';');
-        getline(issLinha,contactLastName, ';');
-        getline(issLinha,contactFirstName, ';');
-        getline(issLinha,dealSize, '\n');
-
-    }
-
-    int getOrderNumber() {
-        return this->orderNumber;
-    }
-    int getQuantityOrdered() {
-        return this->quantityOrdered;
-    }
-    float getPriceEach() {
-        return this->priceEach;
-    }
-    string getOrderDate() {
-        return this->orderDate;
-    }
-    string getStatus() {
-        return this->status;
-    }
-    string getProductLine() {
-        return this->productLine;
-    }
-    string getProductCode() {
-        return this->productCode;
-    }
-    string getCustomerName() {
-        return this->customerName;
-    }
-    string getCity() {
-        return this->city;
-    }
-    string getCountry() {
-        return this->country;
-    }
-    string getContactLastName() {
-        return this->contactLastName;
-    }
-    string getContactFirstName() {
-        return this->contactFirstName;
-    }
-    string getDealSize() {
-        return this->dealSize;
-    }
-
-
-};
 class Sistema {
 private:
     vector <Registro*> dados;
@@ -300,17 +339,20 @@ public:
 
     ~Sistema() {};
 
-    HashTable<Registro*> *getRegistroProductLineCountry(string key) {
-        // fazer essa caralha
+    HashTable<Registro*> *getHashProductLine() {
         return this->hashProductLine;
     }
 
-    void imprimiRegistroTeste() {
-        vector<string>aleatorio;
-        for(vector<Registro*>::iterator it = this->dados.begin(); it != this->dados.end(); ++it) {
-            aleatorio.push_back((*it)->getCity());
-            cout << (*it)->getCity() << '\t';
+    void getRegistroProductLineCountry(string productLine, string country) {
+        int flag = 0;
+
+        getHashProductLine()->getTable()->printList();
+        cout<<endl;
+        for(int i = 0; i < getHashProductLine()->getNumberOfItems(); i++) {
+            flag++;
         }
+        cout << flag << endl;
+        //return this->hashProductLine;
     }
 
     string toCamelCase(string palavra) {
@@ -332,12 +374,11 @@ public:
         return camelCase;
     }
 
-
 };
 
 int main() {
     int opc;
-    string fodase = "motorcycle";
+    string productLine = "Motorcycles", country = "brazil";
     string arquivo = "toy_sales.csv", nomeArq;
     Sistema *sistema = new Sistema(arquivo);
     //sistema->imprimiRegistroTeste();
@@ -350,11 +391,18 @@ int main() {
         cout << "4 - Histogramas" << endl;
         //cout << sistema->hashProductLine("motorcycle");
         cin >> opc;
-
-
-
-        if(opc == 2){
-
+        switch(opc) {
+        case 1:
+            break;
+        case 2:
+            sistema->getRegistroProductLineCountry(productLine, country);
+            system("pause");
+            break;
+        case 3:
+            break;
+        case 4:
+            sistema->getHashProductLine()->printHistogram();
+            break;
         }
 
     }
