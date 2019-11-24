@@ -411,7 +411,6 @@ public:
         }
     }
 
-
     void printHistrogramaProductLine() {
         int flag;
         vector<float> porcent;
