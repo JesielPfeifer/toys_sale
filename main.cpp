@@ -181,6 +181,29 @@ public:
         cout << "\nTotal: " << flag << endl;
     }
 
+    string saveNewFile(string city) {
+        HItem<T>* current = head;
+        stringstream oss;
+        while(current != NULL) {
+            if(current->getElement()->getCity() == city) {
+                oss << current->getElement()->getOrderNumber() << ';';
+                oss << current->getElement()->getQuantityOrdered() << ';';
+                oss << current->getElement()->getPriceEach() << ';';
+                oss << current->getElement()->getOrderDate() << ';';
+                oss << current->getElement()->getStatus() << ';';
+                oss << current->getElement()->getProductLine() << ';';
+                oss << current->getElement()->getProductCode() << ';';
+                oss << current->getElement()->getCustomerName() << ';';
+                oss << current->getElement()->getCity() << ';';
+                oss << current->getElement()->getCountry() << ';';
+                oss << current->getElement()->getContactLastName() << ';';
+                oss << current->getElement()->getContactFirstName() << ';';
+                oss << current->getElement()->getDealSize() << '\n';
+            }
+            current = current->getNext();
+        }
+        return oss.str();
+    }
     void printListCountry(string country) {
         // TODO: Remover do HLinkedList e falar com o sor sobre a duplicata
         HItem<T>* current = head;
@@ -196,6 +219,7 @@ public:
         }
     }
 };
+
 
 template <class T>
 class HashTable {
@@ -272,10 +296,10 @@ public:
         for(int i = 0; i < this->length; i++) {
             flag = 0;
             cout << i + 1 << ":\t";
-            for(int j = 0; j < this->table[i].size(); j++){
+            for(int j = 0; j < this->table[i].size(); j++) {
                 flag++;
-        }
-        cout << flag << endl;
+            }
+            cout << flag << endl;
         }
     }
 
@@ -288,7 +312,7 @@ public:
     int getLength() {
         return this->length;
     }
-    int getHashIndice(string key){
+    int getHashIndice(string key) {
         return this->hash(key);
     }
 
@@ -301,11 +325,14 @@ public:
 class Sistema {
 private:
     vector <Registro*> dados;
-    HashTable <Registro*> *hashProductLine;
+    HashTable<Registro*> *hashProductLine;
+    HashTable<Registro*> *hashCidade;
+
 public:
 
     Sistema(string arqDados) {
         hashProductLine = new HashTable<Registro*>(7);
+        hashCidade = new HashTable<Registro*>(11);
         fstream arq;
         arq.open(arqDados.c_str(), fstream::in);
         string linha, topLine;
@@ -317,6 +344,7 @@ public:
                 Registro *reg = new Registro(linha);
                 dados.push_back(reg);
                 this->hashProductLine->insert(reg->getProductLine(), reg);
+                this->hashCidade->insert(reg->getCity(), reg);
             }
         } else {
             cout << "Erro ao abrir o arquivo!" << endl;
@@ -329,7 +357,9 @@ public:
     HashTable<Registro*> *getHashProductLine() {
         return this->hashProductLine;
     }
-
+    HashTable <Registro*> *getHashCidade() {
+        return this->hashCidade;
+    }
     void getRegistroProductLineCountry(string productLine, string country) {
         int flag = 0;
         cout << "Product line: " << productLine << endl;
@@ -338,13 +368,23 @@ public:
         getHashProductLine()->getTable()[indice].printListCountry(country);
         cout<<endl;
     }
-
+    void exportNewCity(string cityName) {
+        string novoArq = "Toy Sales " + cityName + ".csv";
+        fstream arq;
+        int indice = getHashCidade()->getHashIndice(cityName);
+        arq.open(novoArq.c_str(), fstream::out);
+        if(arq.is_open()) {
+            cout << "Salvando dados filtrados em novo arquivo..." << endl;
+            arq << "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n";
+            arq << getHashCidade()->getTable()[indice].saveNewFile(cityName);
+        }
+    }
 };
 
 int main() {
     int opc;
-    string productLine = "Motorcycles", country = "Germany";
-    string arquivo = "toy_sales.csv", nomeArq;
+    string productLine = "Motorcycles", country = "brazil";
+    string arquivo = "toy_sales.csv", nomeArq, cityName;
     Sistema *sistema = new Sistema(arquivo);
 
     while(1) {
@@ -362,6 +402,11 @@ int main() {
             system("pause");
             break;
         case 3:
+            cout << "Digite o nome da cidade da qual deseja exportar os dados: ";
+            cin.ignore();
+            getline(cin, cityName);
+            sistema->exportNewCity(cityName);
+            system("pause");
             break;
         case 4:
             sistema->getHashProductLine()->printHistogram();
