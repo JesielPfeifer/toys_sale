@@ -364,7 +364,6 @@ public:
         int flag = 0;
         cout << "Product line: " << productLine << endl;
         int indice = getHashProductLine()->getHashIndice(productLine);
-        cout << "indice: " <<indice << endl;
         getHashProductLine()->getTable()[indice].printListCountry(country);
         cout<<endl;
     }
@@ -383,7 +382,7 @@ public:
 
 int main() {
     int opc;
-    string productLine = "Motorcycles", country = "brazil";
+    string productLine = "Motorcycles", country = "Germany";
     string arquivo = "toy_sales.csv", nomeArq, cityName;
     Sistema *sistema = new Sistema(arquivo);
 
