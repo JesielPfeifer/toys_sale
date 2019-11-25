@@ -168,6 +168,10 @@ public:
         this->length++;
     }
 
+    HItem<T>* getHead() {
+        return this->head;
+    }
+
     void printList() {
         HItem<T>* current = head;
         int flag = 0;
@@ -198,7 +202,7 @@ public:
                 oss << current->getElement()->getCountry() << ';';
                 oss << current->getElement()->getContactLastName() << ';';
                 oss << current->getElement()->getContactFirstName() << ';';
-                oss << current->getElement()->getDealSize() << '\n';
+                oss << current->getElement()->getDealSize() << endl;
             }
             current = current->getNext();
         }
@@ -324,13 +328,14 @@ public:
         string linha, topLine;
         if(arq.is_open()) {
             getline(arq,topLine);
-            if(topLine != "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n");
             while(!arq.eof()) {
                 getline(arq,linha,'\n');
-                Registro *reg = new Registro(linha);
-                dados.push_back(reg);
-                this->hashProductLine->insert(reg->getProductLine(), reg);
-                this->hashCidade->insert(reg->getCity(), reg);
+                if(linha != "") {
+                    Registro *reg = new Registro(linha);
+                    dados.push_back(reg);
+                    this->hashProductLine->insert(reg->getProductLine(), reg);
+                    this->hashCidade->insert(reg->getCity(), reg);
+                }
             }
         } else {
             cout << "Erro ao abrir o arquivo!" << endl;
@@ -367,20 +372,47 @@ public:
             cout << "Salvando dados filtrados em novo arquivo..." << endl;
             arq << "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n";
             arq << getHashCidade()->getTable()[indice].saveNewFile(cityName);
+            cout << getHashCidade()->getTable()[indice].saveNewFile(cityName);
         }
     }
 
-    void findOrderNumber(int orderNumber){
+    void swap(Registro *xp, Registro *yp) {
+        Registro temp = *xp;
+        *xp = *yp;
+        *yp = temp;
+    }
+
+    void bubbleSort() {
+        int conta =0;
+        int i, j, len = this->dados.size();
+        bool swapped;
+        for (i = 0; i < len - 1; i++) {
+            swapped = false;
+            for (j = 0; j < len - i - 1; j++) {
+                if (this->dados[j]->getOrderNumber() > this->dados[j+1]->getOrderNumber()) {
+                    swap(this->dados[j], this->dados[j+1]);
+                    swapped = true;
+                }
+            }
+            if (swapped == false)
+                break;
+        }
+    }
+
+    void findOrderNumber(int orderNumber) {
+        bubbleSort();
+        system("pause");
     }
 
 };
 
 int main() {
     int opc, order;
-    string productLine = "Motorcycles", country = "brazil";
+    string productLine, country;
     string arquivo = "toy_sales.csv", nomeArq, cityName;
     Sistema *sistema = new Sistema(arquivo);
     sistema->getHashCidade()->printHistogram();
+    sistema->bubbleSort();
     system("pause");
 
 
@@ -398,6 +430,10 @@ int main() {
             sistema->findOrderNumber(order);
             break;
         case 2:
+            cout << "Digite o Product Line no qual deseja pesquisar: ";
+            getline(cin,productLine);
+            cout << "Digite o Country no qual deseja pesquisar: ";
+            getline(cin,country);
             sistema->getRegistroProductLineCountry(productLine, country);
             system("pause");
             break;
