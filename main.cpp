@@ -399,9 +399,43 @@ public:
         }
     }
 
-    void findOrderNumber(int orderNumber) {
-        bubbleSort();
-        system("pause");
+    Registro* pesquisaBinaria(int orderNum) {
+        int inferior, superior, media, flag;
+        inferior = 0;
+        superior = this->dados.size() - 1;
+        while (inferior <= superior) {
+            media = (inferior + superior) / 2;
+            if (orderNum == this->dados[media]->getOrderNumber()) {
+                return dados[media];
+            } else if(orderNum > this->dados[media]->getOrderNumber()) {
+                inferior = media + 1;
+            } else if(orderNum < this->dados[media]->getOrderNumber()) {
+                superior = media - 1;
+            }
+        }
+        return 0;
+    }
+
+    void imprimePesquisa(int orderNum) {
+        if(pesquisaBinaria(orderNum) != 0) {
+            cout << this->pesquisaBinaria(orderNum)->getOrderNumber() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getOrderDate() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getStatus() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getCustomerName() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getCity() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getCountry() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getContactLastName() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getContactFirstName() << endl;
+            cout << this->pesquisaBinaria(orderNum)->getDealSize() << endl;
+            for(vector<Registro*>::iterator it = dados.begin(); it != dados.end(); ++it) {
+                if(orderNum == (*it)->getOrderNumber()) {
+                    cout << "QUANTITYORDERED\tPRICEEACH\tPRODUCTLINE\tPRODUCTCODE" << endl;
+                    cout << (*it)->getQuantityOrdered() << '\t' << (*it)->getPriceEach() << '\t';
+                    cout << (*it)->getProductLine() << '\t' << (*it)->getProductCode() << endl;
+                }
+            }
+        } else
+            cout << "Order Number inserido NAO EXISTE!" << endl;
     }
 
 };
@@ -427,7 +461,9 @@ int main() {
         case 1:
             cout << "Digite o Order Number no qual deseja pesquisar: ";
             cin >> order;
-            sistema->findOrderNumber(order);
+            sistema->pesquisaBinaria(order);
+            sistema->imprimePesquisa(order);
+            system("pause");
             break;
         case 2:
             cout << "Digite o Product Line no qual deseja pesquisar: ";
