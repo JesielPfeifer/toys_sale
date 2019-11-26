@@ -192,6 +192,10 @@ public:
         this->length++;
     }
 
+    HItem<T>* getHead() {
+        return this->head;
+    }
+
     void printList() {
         HItem<T> *current = head;
         int flag = 0;
@@ -363,16 +367,16 @@ public:
         fstream arq;
         arq.open(arqDados.c_str(), fstream::in);
         string linha, topLine;
-        if (arq.is_open()) {
-            getline(arq, topLine);
-            if (topLine !=
-                "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n");
-            while (!arq.eof()) {
-                getline(arq, linha, '\n');
-                Registro *reg = new Registro(linha);
-                dados.push_back(reg);
-                this->hashProductLine->insert(reg->getProductLine(), reg);
-                this->hashCidade->insert(reg->getCity(), reg);
+        if(arq.is_open()) {
+            getline(arq,topLine);
+            while(!arq.eof()) {
+                getline(arq,linha,'\n');
+                if(linha != "") {
+                    Registro *reg = new Registro(linha);
+                    dados.push_back(reg);
+                    this->hashProductLine->insert(reg->getProductLine(), reg);
+                    this->hashCidade->insert(reg->getCity(), reg);
+                }
             }
         } else {
             cout << "Erro ao abrir o arquivo!" << endl;
@@ -398,18 +402,6 @@ public:
         cout << endl;
     }
 
-    void exportNewCity(string cityName) {
-        string novoArq = "Toy Sales " + cityName + ".csv";
-        fstream arq;
-        int indice = getHashCidade()->getHashIndice(cityName);
-        arq.open(novoArq.c_str(), fstream::out);
-        if (arq.is_open()) {
-            cout << "Salvando dados filtrados em novo arquivo..." << endl;
-            arq
-                    << "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n";
-            arq << getHashCidade()->getTable()[indice].saveNewFile(cityName);
-        }
-    }
 
     void printHistrogramaProductLine() {
         int flag;
@@ -482,13 +474,104 @@ public:
     }
 
 
+    void exportNewCity(string cityName) {
+        string novoArq = "Toy Sales " + cityName + ".csv";
+        fstream arq;
+        int indice = getHashCidade()->getHashIndice(cityName);
+        arq.open(novoArq.c_str(), fstream::out);
+        if(arq.is_open()) {
+            cout << "Salvando dados filtrados em novo arquivo..." << endl;
+            arq << "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n";
+            arq << getHashCidade()->getTable()[indice].saveNewFile(cityName);
+            cout << getHashCidade()->getTable()[indice].saveNewFile(cityName);
+        }
+    }
+
+    void swap(Registro *xp, Registro *yp) {
+        Registro temp = *xp;
+        *xp = *yp;
+        *yp = temp;
+    }
+
+    void bubbleSort() {
+        int conta =0;
+        int i, j, len = this->dados.size();
+        bool swapped;
+        for (i = 0; i < len - 1; i++) {
+            swapped = false;
+            for (j = 0; j < len - i - 1; j++) {
+                if (this->dados[j]->getOrderNumber() > this->dados[j+1]->getOrderNumber()) {
+                    swap(this->dados[j], this->dados[j+1]);
+                    swapped = true;
+                }
+            }
+            if (swapped == false)
+                break;
+        }
+    }
+
+    int pesquisaBinaria(int orderNum) {
+        int inferior, superior, media, flag;
+        inferior = 0;
+        superior = this->dados.size() - 1;
+        while (inferior <= superior) {
+            media = (inferior + superior) / 2;
+            if (orderNum == this->dados[media]->getOrderNumber()) {
+                return media;
+            } else if(orderNum > this->dados[media]->getOrderNumber()) {
+                inferior = media + 1;
+            } else if(orderNum < this->dados[media]->getOrderNumber()) {
+                superior = media - 1;
+            }
+        }
+        return -1;
+    }
+
+    void imprimePesquisa(int orderNum) {
+        int media = this->pesquisaBinaria(orderNum);
+        if(pesquisaBinaria(orderNum) != -1) {
+            cout << this->dados[media]->getOrderNumber() << endl;
+            cout << this->dados[media]->getOrderDate() << endl;
+            cout << this->dados[media]->getStatus() << endl;
+            cout << this->dados[media]->getCustomerName() << endl;
+            cout << this->dados[media]->getCity() << endl;
+            cout << this->dados[media]->getCountry() << endl;
+            cout << this->dados[media]->getContactLastName() << endl;
+            cout << this->dados[media]->getContactFirstName() << endl;
+            cout << this->dados[media]->getDealSize() << endl;
+            cout << "QUANTITYORDERED\tPRICEEACH\tPRODUCTLINE\tPRODUCTCODE" << endl;
+            for(int i = media; i < this->dados.size(); i++) {
+                if (this->dados[i]->getOrderNumber() == orderNum) {
+                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
+                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                } else {
+                    break;
+                }
+            }
+            for(int i = media ; i > 0 ; i--) {
+                if (this->dados[i]->getOrderNumber() == orderNum) {
+                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
+                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                } else {
+                    break;
+                }
+            }
+        } else {
+            cout << "Order Number inserido NAO EXISTE!" << endl;
+        }
+    }
+
 };
 
 int main() {
-    int opc;
-    string productLine = "Motorcycles", country = "Germany";
+    int opc, order;
+    string productLine, country;
     string arquivo = "toy_sales.csv", nomeArq, cityName;
     Sistema *sistema = new Sistema(arquivo);
+    sistema->getHashCidade()->printHistogram();
+    sistema->bubbleSort();
+    system("pause");
+
 
     while (1) {
         system("cls");
@@ -497,10 +580,18 @@ int main() {
         cout << "3 - Exportar por city" << endl;
         cout << "4 - Histogramas" << endl;
         cin >> opc;
-        switch (opc) {
+        switch(opc) {
             case 1:
+                cout << "Digite o Order Number no qual deseja pesquisar: ";
+                cin >> order;
+                sistema->imprimePesquisa(order);
+                system("pause");
                 break;
             case 2:
+                cout << "Digite o Product Line no qual deseja pesquisar: ";
+                getline(cin,productLine);
+                cout << "Digite o Country no qual deseja pesquisar: ";
+                getline(cin,country);
                 sistema->getRegistroProductLineCountry(productLine, country);
                 system("pause");
                 break;
