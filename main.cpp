@@ -399,43 +399,55 @@ public:
         }
     }
 
-    Registro* pesquisaBinaria(int orderNum) {
+    int pesquisaBinaria(int orderNum) {
         int inferior, superior, media, flag;
         inferior = 0;
         superior = this->dados.size() - 1;
         while (inferior <= superior) {
             media = (inferior + superior) / 2;
             if (orderNum == this->dados[media]->getOrderNumber()) {
-                return dados[media];
+                return media;
             } else if(orderNum > this->dados[media]->getOrderNumber()) {
                 inferior = media + 1;
             } else if(orderNum < this->dados[media]->getOrderNumber()) {
                 superior = media - 1;
             }
         }
-        return 0;
+        return -1;
     }
 
     void imprimePesquisa(int orderNum) {
-        if(pesquisaBinaria(orderNum) != 0) {
-            cout << this->pesquisaBinaria(orderNum)->getOrderNumber() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getOrderDate() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getStatus() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getCustomerName() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getCity() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getCountry() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getContactLastName() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getContactFirstName() << endl;
-            cout << this->pesquisaBinaria(orderNum)->getDealSize() << endl;
-            for(vector<Registro*>::iterator it = dados.begin(); it != dados.end(); ++it) {
-                if(orderNum == (*it)->getOrderNumber()) {
-                    cout << "QUANTITYORDERED\tPRICEEACH\tPRODUCTLINE\tPRODUCTCODE" << endl;
-                    cout << (*it)->getQuantityOrdered() << '\t' << (*it)->getPriceEach() << '\t';
-                    cout << (*it)->getProductLine() << '\t' << (*it)->getProductCode() << endl;
+        int media = this->pesquisaBinaria(orderNum);
+        if(pesquisaBinaria(orderNum) != -1) {
+            cout << this->dados[media]->getOrderNumber() << endl;
+            cout << this->dados[media]->getOrderDate() << endl;
+            cout << this->dados[media]->getStatus() << endl;
+            cout << this->dados[media]->getCustomerName() << endl;
+            cout << this->dados[media]->getCity() << endl;
+            cout << this->dados[media]->getCountry() << endl;
+            cout << this->dados[media]->getContactLastName() << endl;
+            cout << this->dados[media]->getContactFirstName() << endl;
+            cout << this->dados[media]->getDealSize() << endl;
+            cout << "QUANTITYORDERED\tPRICEEACH\tPRODUCTLINE\tPRODUCTCODE" << endl;
+            for(int i = media; i < this->dados.size(); i++) {
+                if (this->dados[i]->getOrderNumber() == orderNum) {
+                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
+                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                } else {
+                    break;
                 }
             }
-        } else
+            for(int i = media ; i > 0 ; i--) {
+                if (this->dados[i]->getOrderNumber() == orderNum) {
+                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
+                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                } else {
+                    break;
+                }
+            }
+        } else {
             cout << "Order Number inserido NAO EXISTE!" << endl;
+        }
     }
 
 };
@@ -461,7 +473,6 @@ int main() {
         case 1:
             cout << "Digite o Order Number no qual deseja pesquisar: ";
             cin >> order;
-            sistema->pesquisaBinaria(order);
             sistema->imprimePesquisa(order);
             system("pause");
             break;
