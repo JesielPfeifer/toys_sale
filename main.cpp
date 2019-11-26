@@ -234,11 +234,11 @@ public:
     }
 
     void printListCountry(string country) {
-        // TODO: Remover do HLinkedList e falar com o sor sobre a duplicata
         HItem<T> *current = head;
+        cout << "Order Number\tOrder Date\tStatus\tCity\tCustomer Name" << endl;
         while (current != NULL) {
             if (current->getElement()->getCountry() == country) {
-                cout << current->getElement()->getOrderNumber() << "\t";
+                cout << current->getElement()->getOrderNumber() << "\t\t";
                 cout << current->getElement()->getOrderDate() << "\t";
                 cout << current->getElement()->getStatus() << "\t";
                 cout << current->getElement()->getCity() << "\t";
@@ -302,8 +302,8 @@ public:
         HItem<T> *item = table[index].getItem(key);
         if (item)
             return item->getElement();
-//        else
-//            return key + ":\tnot found";
+        else
+            cout << "Nao encontrado" << endl;
     }
 
     void printTable() {
@@ -480,10 +480,10 @@ public:
         int indice = getHashCidade()->getHashIndice(cityName);
         arq.open(novoArq.c_str(), fstream::out);
         if(arq.is_open()) {
-            cout << "Salvando dados filtrados em novo arquivo..." << endl;
+            cout << "\nSalvando dados filtrados em novo arquivo...\n" << endl;
+            cout << "Arquivos salvos em [Toy Sales " + cityName + ".csv]\n" << endl;
             arq << "ORDERNUMBER;QUANTITYORDERED;PRICEEACH;ORDERDATE;STATUS;PRODUCTLINE;PRODUCTCODE;CUSTOMERNAME;CITY;COUNTRY;CONTACTLASTNAME;CONTACTFIRSTNAME;DEALSIZE\n";
             arq << getHashCidade()->getTable()[indice].saveNewFile(cityName);
-            cout << getHashCidade()->getTable()[indice].saveNewFile(cityName);
         }
     }
 
@@ -530,28 +530,28 @@ public:
     void imprimePesquisa(int orderNum) {
         int media = this->pesquisaBinaria(orderNum);
         if(pesquisaBinaria(orderNum) != -1) {
-            cout << this->dados[media]->getOrderNumber() << endl;
-            cout << this->dados[media]->getOrderDate() << endl;
-            cout << this->dados[media]->getStatus() << endl;
-            cout << this->dados[media]->getCustomerName() << endl;
-            cout << this->dados[media]->getCity() << endl;
-            cout << this->dados[media]->getCountry() << endl;
-            cout << this->dados[media]->getContactLastName() << endl;
-            cout << this->dados[media]->getContactFirstName() << endl;
-            cout << this->dados[media]->getDealSize() << endl;
+            cout << "\nOrder Number: " << this->dados[media]->getOrderNumber() << endl;
+            cout << "Order Date: " << this->dados[media]->getOrderDate() << endl;
+            cout << "Status: " << this->dados[media]->getStatus() << endl;
+            cout << "Customer Name: " <<this->dados[media]->getCustomerName() << endl;
+            cout << "City: " <<this->dados[media]->getCity() << endl;
+            cout << "Country: " << this->dados[media]->getCountry() << endl;
+            cout << "Contact Last Name: " << this->dados[media]->getContactLastName() << endl;
+            cout << "Contact First Name: " <<this->dados[media]->getContactFirstName() << endl;
+            cout << "Deal Size: " << this->dados[media]->getDealSize() << "\n\n";
             cout << "QUANTITYORDERED\tPRICEEACH\tPRODUCTLINE\tPRODUCTCODE" << endl;
             for(int i = media; i < this->dados.size(); i++) {
                 if (this->dados[i]->getOrderNumber() == orderNum) {
-                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
-                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                    cout << this->dados[i]->getQuantityOrdered() << "\t\t" << this->dados[i]->getPriceEach() << "\t\t";
+                    cout << this->dados[i]->getProductLine() << "\t\t" << this->dados[i]->getProductCode() << "\n\n";
                 } else {
                     break;
                 }
             }
-            for(int i = media ; i > 0 ; i--) {
+            for(int i = media-1 ; i > 0 ; i--) {
                 if (this->dados[i]->getOrderNumber() == orderNum) {
-                    cout << this->dados[i]->getQuantityOrdered() << '\t' << this->dados[i]->getPriceEach() << '\t';
-                    cout << this->dados[i]->getProductLine() << '\t' << this->dados[i]->getProductCode() << endl;
+                    cout << this->dados[i]->getQuantityOrdered() << "\t\t" << this->dados[i]->getPriceEach() << "\t\t";
+                    cout << this->dados[i]->getProductLine() << "\t\t" << this->dados[i]->getProductCode() << "\n\n";
                 } else {
                     break;
                 }
@@ -565,48 +565,51 @@ public:
 
 int main() {
     int opc, order;
-    string productLine, country;
+    string productLine;
+    string country;
     string arquivo = "toy_sales.csv", nomeArq, cityName;
     Sistema *sistema = new Sistema(arquivo);
-    sistema->getHashCidade()->printHistogram();
-    sistema->bubbleSort();
-    system("pause");
-
 
     while (1) {
         system("cls");
-        cout << "1 - Localizar por Order Number" << endl;
-        cout << "2 - Localizar por Product Line e Country" << endl;
-        cout << "3 - Exportar por city" << endl;
-        cout << "4 - Histogramas" << endl;
+        cout << "---------------Toy Sales---------------\n\n";
+        cout << "[1] Localizar por Order Number" << endl;
+        cout << "[2] Localizar por Product Line e Country" << endl;
+        cout << "[3] Exportar por City" << endl;
+        cout << "[4] Histogramas\n" << endl;
+        cout << "Escolha uma opcao [ ]\b\b";
         cin >> opc;
+        cout << endl;
         switch(opc) {
-            case 1:
-                cout << "Digite o Order Number no qual deseja pesquisar: ";
-                cin >> order;
-                sistema->imprimePesquisa(order);
-                system("pause");
-                break;
-            case 2:
-                cout << "Digite o Product Line no qual deseja pesquisar: ";
-                getline(cin,productLine);
-                cout << "Digite o Country no qual deseja pesquisar: ";
-                getline(cin,country);
-                sistema->getRegistroProductLineCountry(productLine, country);
-                system("pause");
-                break;
-            case 3:
-                cout << "Digite o nome da cidade da qual deseja exportar os dados: ";
-                cin.ignore();
-                getline(cin, cityName);
-                sistema->exportNewCity(cityName);
-                system("pause");
-                break;
-            case 4:
-                sistema->printHistrogramaProductLine();
-                sistema->printHistrogramaCity();
-                system("pause");
-                break;
+        case 1:
+            cout << "Digite o Order Number no qual deseja pesquisar: ";
+            cin >> order;
+            sistema->imprimePesquisa(order);
+            system("pause");
+            break;
+        case 2: {
+            cout << "Digite o Product Line no qual deseja pesquisar: ";
+            cin.ignore();
+            getline(cin, productLine);
+            cout << "\nDigite o Country no qual deseja pesquisar: ";
+            getline(cin, country);
+            sistema->getRegistroProductLineCountry(productLine,country);
+            system("pause");
+
+        }
+        break;
+        case 3:
+            cout << "Digite o nome da cidade da qual deseja exportar os dados: ";
+            cin.ignore();
+            getline(cin, cityName);
+            sistema->exportNewCity(cityName);
+            system("pause");
+            break;
+        case 4:
+            sistema->printHistrogramaProductLine();
+            sistema->printHistrogramaCity();
+            system("pause");
+            break;
         }
 
     }
